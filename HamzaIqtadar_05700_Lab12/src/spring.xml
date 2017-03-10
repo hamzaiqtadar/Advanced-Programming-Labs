@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+ 
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/gradebook" />
+        <property name="username" value="root" />
+        <property name="password" value="seecs@123" />
+    </bean>
+    <bean id="dataSource2" class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/attendance_total" />
+        <property name="username" value="root" />
+        <property name="password" value="seecs@123" />
+    </bean>
+ 
+<!-- Hibernate 3 XML SessionFactory Bean definition-->
+     <bean id="hibernate4SessionFactory"
+        class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource2" />
+        <property name="mappingResources">
+            <list>
+                <value>attendance\entity\Attendance.hbm.xml</value>
+                <value>attendance\entity\Course.hbm.xml</value>
+                <value>attendance\entity\Student.hbm.xml</value>
+                <value>attendance\entity\Teacher.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <value>
+                hibernate.dialect=org.hibernate.dialect.MySQLDialect
+            </value>
+        </property>
+    </bean> 
+ 
+<!-- Hibernate 3 Annotation SessionFactory Bean definition-->
+    <bean id="hibernate4AnnotatedSessionFactory"
+        class="org.springframework.orm.hibernate4.annotation.AnnotationSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="annotatedClasses">
+            <list>
+                <value>Clo</value>
+                <value>Content</value>
+                <value>Course</value>
+                <value>Teacher</value>
+                <value>Student</value>
+                <value>Grade</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.current_session_context_class">thread</prop>
+                <prop key="hibernate.show_sql">false</prop>
+            </props>
+        </property>
+    </bean>
+     
+    <bean id="GradeDao" class="GradeDao">
+        <property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+    </bean>
+    <bean id="TeacherDao" class="TeacherDao">
+        <property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+    </bean>
+        <bean id="CloDao" class="CloDao">
+        <property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+    </bean>
+    <bean id="CourseDao" class="CourseDao">
+        <property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+    </bean>
+        <bean id="ContentDao" class="ContentDao">
+        <property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+    </bean>
+    <bean id="StudentDao" class="StudentDao">
+        <property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+    </bean>
+</beans>
